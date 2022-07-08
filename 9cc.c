@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
     printf(".intel_syntax noprefix\n");
     printf(".globl main\n");
     printf("main:\n");
-    pirntf("    mov rax, %d\n", atoi(argv[1]));
+    printf("    mov rax, %d\n", atoi(argv[1]));
     printf("    ret\n");
     return 0;
 }
