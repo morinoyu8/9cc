@@ -10,8 +10,6 @@ test: 9cc
 clean:
 	rm -f 9cc *.o *~ tmp*
 
-
-
 docker:
 ifeq ($(UNAME), arm64)
 	docker run --rm -it -v $$HOME/Desktop/9cc:/home/user/9cc compilerbook_x86_64
