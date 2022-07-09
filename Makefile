@@ -10,6 +10,6 @@ clean:
 	rm -f 9cc *.o *~ tmp*
 
 docker:
-	docker run --rm -it -v $$HOME/Desktop/9cc:/home/user/9cc compilerbook_amd64
+	docker run --rm -it -v $$HOME/Desktop/9cc:/home/user/9cc compilerbook_x86_64
 
 .PHONY: test clean
