@@ -20,7 +20,7 @@ struct Token {
     Token *next;     // 次の入力トークン
     int val;         // kindがTK_NUMのとき、その数値
     char *str;       // トークン文字列
-}
+};
 
 // 現在着目しているトークン
 Token *token;
