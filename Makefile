@@ -1,8 +1,5 @@
 CFLAGS=-std=c11 -g -static
 
-docker:
-	docker run --rm -it -v $$HOME/Desktop/9cc:/home/user/9cc compilerbook
-
 9cc: 9cc.c
 
 test: 9cc
@@ -11,5 +8,8 @@ test: 9cc
 
 clean:
 	rm -f 9cc *.o *~ tmp*
+
+docker:
+	docker run --rm -it -v $$HOME/Desktop/9cc:/home/user/9cc compilerbook
 
 .PHONY: test clean
