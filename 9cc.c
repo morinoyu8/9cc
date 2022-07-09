@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    char *p = argv[1]
+    char *p = argv[1];
 
     printf(".intel_syntax noprefix\n");
     printf(".globl main\n");
