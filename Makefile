@@ -10,6 +10,10 @@ clean:
 	rm -f 9cc *.o *~ tmp*
 
 docker:
+ifeq ($(uname -m), arm64)
 	docker run --rm -it -v $$HOME/Desktop/9cc:/home/user/9cc compilerbook_x86_64
+else
+	docker run --rm -it -v $$HOME/Desktop/9cc:/home/user/9cc compilerbook
+endif
 
 .PHONY: test clean
