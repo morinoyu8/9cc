@@ -145,6 +145,7 @@ Node *new_node_num(int val) {
     return node;
 }
 
+// expr = mul ("+" mul | "-" mul)*
 Node *expr() {
     Node *node = mul();
 
@@ -163,9 +164,9 @@ Node *mul() {
 
     for (;;) {
         if (consume('*'))
-            node = new_node(ND_MUL, node, mul());
+            node = new_node(ND_MUL, node, primary());
         else if (consume('/'))
-            node = new_node(ND_DIV, node, mul());
+            node = new_node(ND_DIV, node, primary());
         else
             return node;
     }
@@ -196,7 +197,7 @@ Token *tokenize(char *p) {
             continue;
         }
 
-        if (*p == '+' || *p == '-') {
+        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')') {
             cur = new_token(TK_RESERVED, cur, p++);
             continue;
         }
@@ -223,6 +224,9 @@ void gen(Node *node) {
     gen(node->lhs);
     gen(node->rhs);
 
+    printf("    pop rdi\n");
+    printf("    pop rax\n");
+
     switch (node->kind) {
     case ND_ADD:
         printf("    add rax, rdi\n");
@@ -234,7 +238,7 @@ void gen(Node *node) {
         printf("    imul rax, rdi\n");
         break;
     case ND_DIV:
-        printf("    cpo\n");
+        printf("    cqo\n");
         printf("    idiv rdi\n");
         break;
     }
