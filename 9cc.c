@@ -39,7 +39,7 @@ struct Node {
     Node *lhs;      // 左辺
     Node *rhs;      // 右辺
     int val;        // kindがND_NUMの場合のみ使う
-}
+};
 
 
 // 現在着目しているトークン
@@ -47,6 +47,21 @@ Token *token;
 
 // 入力プログラム
 char *user_input;
+
+void error_at(char *loc, char *fmt, ...);
+void error(char *fmt, ...);
+bool consume(char op);
+void expect(char op);
+int expect_number();
+bool at_eof();
+Token *new_token(Tokenkind kind, Token *cur, char *str);
+Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
+Node *new_node_num(int val);
+Node *expr();
+Node *mul();
+Node *primary();
+Token *tokenize(char *p);
+
 
 //エラー箇所を報告する
 void error_at(char *loc, char *fmt, ...) {
