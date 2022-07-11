@@ -138,7 +138,34 @@ Node *expr() {
             node = new_node(ND_ADD, node, mul());
         else if (consume('-'))
             node = new_node(ND_SUB, node, mul());
+        else
+            return node;
     }
+}
+
+Node *mul() {
+    Node *node = primary();
+
+    for (;;) {
+        if (consume('*'))
+            node = new_node(ND_MUL, node, mul());
+        else if (consume('/'))
+            node = new_node(ND_DIV, node, mul());
+        else
+            return node;
+    }
+}
+
+Node *primary() {
+    // 次のトークンが"("なら、"(" expr ")"のはず
+    if (consume('(')) {
+        Node *node = expr();
+        expect(')');
+        return node;
+    }
+
+    // そうでなければ数値のはず
+    return new_node_num(expect_number());
 }
 
 // 入力文字列pをトークナイズしてそれを返す
