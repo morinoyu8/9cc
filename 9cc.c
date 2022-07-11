@@ -160,6 +160,7 @@ Node *expr() {
     }
 }
 
+// mul = unary ("*" unary | "/" unary)*
 Node *mul() {
     Node *node = unary();
 
@@ -173,6 +174,7 @@ Node *mul() {
     }
 }
 
+// unary = ("+" | "-")? primary
 Node *unary() {
     if (consume('+'))
         return primary();
@@ -181,6 +183,7 @@ Node *unary() {
     return primary();
 }
 
+// primary = num | "(" expr ")"
 Node *primary() {
     // 次のトークンが"("なら、"(" expr ")"のはず
     if (consume('(')) {
