@@ -38,11 +38,20 @@ void error(char *fmt, ...) {
 // 次のトークンが期待している記号のときには、トークンを1つ読み進めて
 // 真を返す。それ以外の場合には偽を返す。
 bool consume(char *op) {
-     if (token->kind != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len)) {
+    if (token->kind != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len)) {
         return false;
     }
     token = token->next;
     return true;
+}
+
+// 次のトークンがローカル変数のときは、トークンを1つ読み進めてそのトークンを返す
+Token *consume_ident() {
+    if (token->kind != TK_IDENT)
+        return NULL;
+    Token *tmp = token;
+    token = token->next;
+    return tmp;
 }
 
 // 次のトークンが期待している記号のときは、トークンを1つ読み進める
@@ -70,7 +79,7 @@ bool at_eof() {
 }
 
 // 新しいトークンを作成してcurに繋げる
-Token *new_token(Tokenkind kind, Token *cur, char *str, int len) {
+Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
     Token *tok = calloc(1, sizeof(Token));
     tok->kind = kind;
     tok->str = str;
@@ -89,6 +98,11 @@ Token *tokenize(char *p) {
         // 空白文字をスキップ
         if (isspace(*p)) {
             p++;
+            continue;
+        }
+
+        if ('a' <= *p && *p <= 'z') {
+            cur = new_token(TK_IDENT, cur, p++, 1);
             continue;
         }
 
