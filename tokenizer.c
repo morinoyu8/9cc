@@ -78,6 +78,10 @@ bool at_eof() {
     return token->kind == TK_EOF;
 }
 
+bool isidentchar(char p) {
+    return ('a' <= p && p <= 'z') || ('A' <= p && p <= 'Z') || p == '_';
+}
+
 // 新しいトークンを作成してcurに繋げる
 Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
     Token *tok = calloc(1, sizeof(Token));
@@ -98,11 +102,6 @@ Token *tokenize(char *p) {
         // 空白文字をスキップ
         if (isspace(*p)) {
             p++;
-            continue;
-        }
-
-        if ('a' <= *p && *p <= 'z') {
-            cur = new_token(TK_IDENT, cur, p++, 1);
             continue;
         }
 
@@ -129,6 +128,17 @@ Token *tokenize(char *p) {
 
         if (*p == ';'){
             cur = new_token(TK_RESERVED, cur, p++, 1);
+            continue;
+        }
+
+        if (isidentchar(*p)) {
+            int len = 0;
+            char *memo_p = p;
+            while(isidentchar(*p)) {
+                len++;
+                p++;
+            }
+            cur = new_token(TK_IDENT, cur, memo_p, len);
             continue;
         }
 
