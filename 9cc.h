@@ -7,6 +7,7 @@ typedef enum {
     TK_NUM,       // 整数トークン
     TK_RETURN,    // return
     TK_IF,        // if
+    TK_ELSE,      // else
     TK_WHILE,     // while
     TK_FOR,       // for
     TK_EOF,       // 入力の終わりを表すトークン
@@ -84,7 +85,7 @@ bool at_eof();
 Token *new_token(TokenKind kind, Token *cur, char *str, int len);
 Token *tokenize(char *p);
 
-Node *new_node(NodeKind kind, Node *child, ...);
+Node *new_node(NodeKind kind, ...);
 Node *new_node_num(int val);
 void program();
 

@@ -36,7 +36,7 @@ Node *new_node(NodeKind kind, ...) {
     Node *node = calloc(1, sizeof(Node));
     node->kind = kind;
     va_list ap;
-    va_start(ap, child);
+    va_start(ap, kind);
     int loop = 2;
     switch (kind) {
     case ND_RETURN:
@@ -80,9 +80,13 @@ Node *stmt() {
         expect(";");
     } else if (consume_token(TK_IF)) {
         expect("(");
-        node = expr();
+        Node *node1 = expr();
         expect(")");
-        node = new_node(ND_IF, node, stmt(), NULL);
+        Node *node2 = stmt();
+        if (consume_token(TK_ELSE))
+            node = new_node(ND_IF, node1, node2, stmt());
+        else
+            node = new_node(ND_IF, node1, node2, NULL);
     } else {
         node = expr();
         expect(";");

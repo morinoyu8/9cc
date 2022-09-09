@@ -51,9 +51,18 @@ void gen(Node *node) {
         gen(node->children[0]);
         printf("    pop rax\n");
         printf("    cmp rax, 0\n");
-        printf("    je .L%d\n", label_num++);
-        gen(node->children[1]);
-        printf(".L0:\n");
+        if (node->children[2]) {
+            printf("    je .Lelse%d\n", label_num);
+            gen(node->children[1]);
+            printf("    je .Lend%d\n", label_num);
+            printf(".Lelse%d:\n", label_num);
+            gen(node->children[2]);
+        } else {
+            printf("    je .Lend%d\n", label_num);
+            gen(node->children[1]);
+        }
+        printf(".Lend%d:\n", label_num);
+        label_num++;
         return;
     default:
         break;
