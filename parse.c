@@ -37,8 +37,9 @@ Node *new_node(NodeKind kind, int child_num, ...) {
     node->kind = kind;
     va_list ap;
     va_start(ap, child_num);
+    node->child_num = child_num;
     if (child_num == 0)
-        node->children = 0;
+        node->children = NULL;
     node->children = calloc(child_num, sizeof(Node));
     for (int i = 0; i < child_num; i++) {
         node->children[i] = va_arg(ap, Node*);
