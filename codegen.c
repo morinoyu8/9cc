@@ -32,8 +32,8 @@ void gen(Node *node) {
         printf("    push rax\n");
         return;
     case ND_ASSIGN:
-        gen_lval(node->lhs);
-        gen(node->rhs);
+        gen_lval(node->children[0]);
+        gen(node->children[1]);
 
         printf("    pop rdi\n");
         printf("    pop rax\n");
@@ -41,26 +41,26 @@ void gen(Node *node) {
         printf("    push rdi\n");
         return;
     case ND_RETURN:
-        gen(node->lhs);
+        gen(node->children[0]);
         printf("    pop rax\n");
         printf("    mov rsp, rbp\n");
         printf("    pop rbp\n");
         printf("    ret\n");
         return;
     case ND_IF:
-        gen(node->lhs);
+        gen(node->children[0]);
         printf("    pop rax\n");
         printf("    cmp rax, 0\n");
         printf("    je .L%d\n", label_num++);
-        gen(node->rhs);
+        gen(node->children[1]);
         printf(".L0:\n");
         return;
     default:
         break;
     }
 
-    gen(node->lhs);
-    gen(node->rhs);
+    gen(node->children[0]);
+    gen(node->children[1]);
 
     printf("    pop rdi\n");
     printf("    pop rax\n");

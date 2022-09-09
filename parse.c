@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 #include "9cc.h"
 
 //
@@ -31,11 +32,24 @@ LVar *find_lvar(Token *tok) {
 }
 
 // 新しいノードの作成
-Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
+Node *new_node(NodeKind kind, ...) {
     Node *node = calloc(1, sizeof(Node));
     node->kind = kind;
-    node->lhs = lhs;
-    node->rhs = rhs;
+    va_list ap;
+    va_start(ap, child);
+    int loop = 2;
+    switch (kind) {
+    case ND_RETURN:
+        loop = 1;
+        break;
+    case ND_IF:
+        loop = 3;
+        break;
+    }
+    for (int i = 0; i < loop; i++) {
+        node->children[i] = va_arg(ap, Node*);
+    }
+    va_end(ap);
     return node;
 }
 
@@ -62,13 +76,13 @@ Node *stmt() {
     Node *node;
 
     if (consume_token(TK_RETURN)) {
-        node = new_node(ND_RETURN, expr(), NULL);
+        node = new_node(ND_RETURN, expr());
         expect(";");
     } else if (consume_token(TK_IF)) {
         expect("(");
         node = expr();
         expect(")");
-        node = new_node(ND_IF, node, stmt());
+        node = new_node(ND_IF, node, stmt(), NULL);
     } else {
         node = expr();
         expect(";");

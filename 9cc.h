@@ -46,11 +46,10 @@ typedef struct Node Node;
 
 // 抽象構文木のノードの型
 struct Node {
-    NodeKind kind;  // ノードの型
-    Node *lhs;      // 左辺
-    Node *rhs;      // 右辺
-    int val;        // kindがND_NUMの場合のみ使う
-    int offset;     // kindがND_LVARの場合のみ使う
+    NodeKind kind;   // ノードの型
+    Node *children[10]; // 子ノード
+    int val;         // kindがND_NUMの場合のみ使う
+    int offset;      // kindがND_LVARの場合のみ使う
 };
 
 typedef struct LVar LVar;
@@ -85,7 +84,7 @@ bool at_eof();
 Token *new_token(TokenKind kind, Token *cur, char *str, int len);
 Token *tokenize(char *p);
 
-Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
+Node *new_node(NodeKind kind, Node *child, ...);
 Node *new_node_num(int val);
 void program();
 
