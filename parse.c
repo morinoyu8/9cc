@@ -45,6 +45,9 @@ Node *new_node(NodeKind kind, ...) {
     case ND_IF:
         loop = 3;
         break;
+    case ND_FOR:
+        loop = 4;
+        break;
     }
     for (int i = 0; i < loop; i++) {
         node->children[i] = va_arg(ap, Node*);
@@ -73,6 +76,7 @@ void program() {
 //      | "return" expr ";"
 //      | "if" "(" expr ")" stmt ("else" stmt)?
 //      | "while" "(" expr ")" stmt
+//      | "for" "(" expr? ";" expr? ";" expr? ")" stmt
 Node *stmt() {
     Node *node;
 
@@ -93,6 +97,24 @@ Node *stmt() {
         node = expr();
         expect(")");
         node = new_node(ND_WHILE, node, stmt());
+    } else if (consume_token(TK_FOR)) {
+        expect("(");
+        Node *node1 = NULL;
+        Node *node2 = NULL;
+        Node *node3 = NULL;
+        if (!consume(";")) {
+            node1 = expr();
+            expect(";");
+        }
+        if (!consume(";")) {
+            node2 = expr();
+            expect(";");
+        }
+        if (!consume(")")) {
+            node3 = expr();
+            expect(")");
+        }
+        node = new_node(ND_FOR, node1, node2, node3, stmt());
     } else {
         node = expr();
         expect(";");

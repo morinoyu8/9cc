@@ -142,11 +142,11 @@ Token *tokenize(char *p) {
         }
 
         // for文
-        /*if (strncmp(p, "for", 3) == 0 && !is_alnum(p[3])) {
+        if (strncmp(p, "for", 3) == 0 && !is_alnum(p[3])) {
             cur = new_token(TK_FOR, cur, p, 3);
             p += 3;
             continue;
-        }*/
+        }
 
         // 比較
         if (*p == '<' || *p == '>' || *p == '=' || *p == '!') {
