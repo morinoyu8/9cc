@@ -57,15 +57,23 @@ void program() {
 
 // stmt = expr ";"
 //      | "return" expr ";"
+//      | "if" "(" expr ")" stmt
 Node *stmt() {
     Node *node;
 
-    if (consume_token(TK_RETURN))
+    if (consume_token(TK_RETURN)) {
         node = new_node(ND_RETURN, expr(), NULL);
-    else
+        expect(";");
+    } else if (consume_token(TK_IF)) {
+        expect("(");
         node = expr();
+        expect(")");
+        node = new_node(ND_IF, node, stmt());
+    } else {
+        node = expr();
+        expect(";");
+    }
 
-    expect(";");
     return node;
 }
 

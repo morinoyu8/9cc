@@ -54,5 +54,7 @@ COMMENTOUT
 assert 10 'a=5;a=a+5;'
 assert 6 'foo = 1; bar = 2 + 3; foo = foo + bar;'
 assert 6 'foo = 1; bar = 2 + 3; return foo + bar;'
+assert 6 'foo = 1; if (foo < 2) foo = foo + 5; return foo;'
+assert 6 'foo = 6; if (foo < 2) foo = foo + 5; return foo;'
 
 echo OK
