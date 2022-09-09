@@ -32,24 +32,15 @@ LVar *find_lvar(Token *tok) {
 }
 
 // 新しいノードの作成
-Node *new_node(NodeKind kind, ...) {
+Node *new_node(NodeKind kind, int child_num, ...) {
     Node *node = calloc(1, sizeof(Node));
     node->kind = kind;
     va_list ap;
-    va_start(ap, kind);
-    int loop = 2;
-    switch (kind) {
-    case ND_RETURN:
-        loop = 1;
-        break;
-    case ND_IF:
-        loop = 3;
-        break;
-    case ND_FOR:
-        loop = 4;
-        break;
-    }
-    for (int i = 0; i < loop; i++) {
+    va_start(ap, child_num);
+    if (child_num == 0)
+        node->children = 0;
+    node->children = calloc(child_num, sizeof(Node));
+    for (int i = 0; i < child_num; i++) {
         node->children[i] = va_arg(ap, Node*);
     }
     va_end(ap);
@@ -81,7 +72,7 @@ Node *stmt() {
     Node *node;
 
     if (consume_token(TK_RETURN)) {
-        node = new_node(ND_RETURN, expr());
+        node = new_node(ND_RETURN, 1, expr());
         expect(";");
     } else if (consume_token(TK_IF)) {
         expect("(");
@@ -89,14 +80,14 @@ Node *stmt() {
         expect(")");
         Node *node2 = stmt();
         if (consume_token(TK_ELSE))
-            node = new_node(ND_IF, node1, node2, stmt());
+            node = new_node(ND_IF, 3, node1, node2, stmt());
         else
-            node = new_node(ND_IF, node1, node2, NULL);
+            node = new_node(ND_IF, 3, node1, node2, NULL);
     } else if (consume_token(TK_WHILE)) {
         expect("(");
         node = expr();
         expect(")");
-        node = new_node(ND_WHILE, node, stmt());
+        node = new_node(ND_WHILE, 2, node, stmt());
     } else if (consume_token(TK_FOR)) {
         expect("(");
         Node *node1 = NULL;
@@ -114,7 +105,7 @@ Node *stmt() {
             node3 = expr();
             expect(")");
         }
-        node = new_node(ND_FOR, node1, node2, node3, stmt());
+        node = new_node(ND_FOR, 4, node1, node2, node3, stmt());
     } else {
         node = expr();
         expect(";");
@@ -133,7 +124,7 @@ Node *assign() {
     Node *node = equality();
 
     if (consume("="))
-        node = new_node(ND_ASSIGN, node, assign());
+        node = new_node(ND_ASSIGN, 2, node, assign());
     return node;
 }
 
@@ -143,9 +134,9 @@ Node *equality() {
 
     for (;;) {
         if (consume("=="))
-            node = new_node(ND_EQ, node, relational());
+            node = new_node(ND_EQ, 2, node, relational());
         else if (consume("!="))
-            node = new_node(ND_NE, node, relational());
+            node = new_node(ND_NE, 2, node, relational());
         else
             return node;
     }
@@ -157,13 +148,13 @@ Node *relational() {
 
     for (;;) {
         if (consume("<"))
-            node = new_node(ND_LT, node, add());
+            node = new_node(ND_LT, 2, node, add());
         else if (consume("<="))
-            node = new_node(ND_LE, node, add());
+            node = new_node(ND_LE, 2, node, add());
         else if (consume(">"))
-            node = new_node(ND_LT, add(), node);
+            node = new_node(ND_LT, 2, add(), node);
         else if (consume(">="))
-            node = new_node(ND_LE, add(), node);
+            node = new_node(ND_LE, 2, add(), node);
         else
             return node;
     }
@@ -175,9 +166,9 @@ Node *add() {
 
     for (;;) {
         if (consume("+"))
-            node = new_node(ND_ADD, node, mul());
+            node = new_node(ND_ADD, 2, node, mul());
         else if (consume("-"))
-            node = new_node(ND_SUB, node, mul());
+            node = new_node(ND_SUB, 2, node, mul());
         else
             return node;
     }
@@ -189,9 +180,9 @@ Node *mul() {
 
     for (;;) {
         if (consume("*"))
-            node = new_node(ND_MUL, node, unary());
+            node = new_node(ND_MUL, 2, node, unary());
         else if (consume("/"))
-            node = new_node(ND_DIV, node, unary());
+            node = new_node(ND_DIV, 2, node, unary());
         else
             return node;
     }
@@ -202,7 +193,7 @@ Node *unary() {
     if (consume("+"))
         return primary();
     else if (consume("-"))
-        return new_node(ND_SUB, new_node_num(0), primary());
+        return new_node(ND_SUB, 2, new_node_num(0), primary());
     return primary();
 }
 
