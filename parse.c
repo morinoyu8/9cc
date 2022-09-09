@@ -71,7 +71,8 @@ void program() {
 
 // stmt = expr ";"
 //      | "return" expr ";"
-//      | "if" "(" expr ")" stmt
+//      | "if" "(" expr ")" stmt ("else" stmt)?
+//      | "while" "(" expr ")" stmt
 Node *stmt() {
     Node *node;
 
@@ -87,6 +88,11 @@ Node *stmt() {
             node = new_node(ND_IF, node1, node2, stmt());
         else
             node = new_node(ND_IF, node1, node2, NULL);
+    } else if (consume_token(TK_WHILE)) {
+        expect("(");
+        node = expr();
+        expect(")");
+        node = new_node(ND_WHILE, node, stmt());
     } else {
         node = expr();
         expect(";");

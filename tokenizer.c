@@ -135,14 +135,14 @@ Token *tokenize(char *p) {
         }
 
         // while文
-        /*if (strncmp(p, "while", 5) == 0 && !is_alnum(p[5])) {
+        if (strncmp(p, "while", 5) == 0 && !is_alnum(p[5])) {
             cur = new_token(TK_WHILE, cur, p, 5);
             p += 5;
             continue;
         }
 
         // for文
-        if (strncmp(p, "for", 3) == 0 && !is_alnum(p[3])) {
+        /*if (strncmp(p, "for", 3) == 0 && !is_alnum(p[3])) {
             cur = new_token(TK_FOR, cur, p, 3);
             p += 3;
             continue;

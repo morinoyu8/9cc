@@ -57,5 +57,8 @@ assert 6 'foo = 1; bar = 2 + 3; return foo + bar;'
 assert 6 'foo = 1; if (foo < 2) foo = foo + 5; return foo;'
 assert 6 'foo = 6; if (foo < 2) foo = foo + 5; return foo;'
 assert 4 'foo = 6; if (foo < 2) foo = foo + 5; else foo = foo - 2; return foo;'
+assert 4 'foo = 1; while (foo < 4) foo = foo + 1; return foo;'
+assert 4 'foo = 1; bar = 0; while (foo < 4) if (bar == 0) foo = foo + 1; else foo = foo + 2; return foo;'
+assert 5 'foo = 1; bar = 1; while (foo < 4) if (bar == 0) foo = foo + 1; else foo = foo + 2; return foo;'
 
 echo OK
