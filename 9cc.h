@@ -37,6 +37,7 @@ typedef enum {
     ND_ASSIGN,  // =
     ND_LVAR,    // ローカル変数
     ND_NUM,     // 整数
+    ND_BLOCK,   // ブロック
     ND_RETURN,  // return
     ND_IF,      // if
     ND_WHILE,   // while
@@ -78,6 +79,7 @@ extern Node *code[100];
 void error_at(char *loc, char *fmt, ...);
 void error(char *fmt, ...);
 bool consume(char *op);
+bool check_token(char *op);
 bool consume_token(TokenKind kind);
 Token *consume_ident();
 void expect(char *op);

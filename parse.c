@@ -40,11 +40,19 @@ Node *new_node(NodeKind kind, int child_num, ...) {
     node->child_num = child_num;
     if (child_num == 0)
         node->children = NULL;
-    node->children = calloc(child_num, sizeof(Node));
+    node->children = calloc(child_num, sizeof(Node*));
     for (int i = 0; i < child_num; i++) {
         node->children[i] = va_arg(ap, Node*);
     }
     va_end(ap);
+    return node;
+}
+
+// 新しい子ノードの追加
+Node *add_child(Node *node, Node *child) {
+    node->child_num++;
+    node->children = realloc(node->children, sizeof(Node*) * node->child_num);
+    node->children[node->child_num - 1] = child;
     return node;
 }
 
@@ -65,6 +73,7 @@ void program() {
 }
 
 // stmt = expr ";"
+//      | "{" stmt* "}"
 //      | "return" expr ";"
 //      | "if" "(" expr ")" stmt ("else" stmt)?
 //      | "while" "(" expr ")" stmt
@@ -72,7 +81,13 @@ void program() {
 Node *stmt() {
     Node *node;
 
-    if (consume_token(TK_RETURN)) {
+    if (consume("{")){
+        node = new_node(ND_BLOCK, 0);
+        while (!check_token("}")) {
+            node = add_child(node, stmt());
+        }
+        expect("}");
+    } else if (consume_token(TK_RETURN)) {
         node = new_node(ND_RETURN, 1, expr());
         expect(";");
     } else if (consume_token(TK_IF)) {

@@ -45,6 +45,15 @@ bool consume(char *op) {
     return true;
 }
 
+// 次のトークンが期待している記号のとき、トークンを読み進めずに
+// 真を返す。それ以外の場合には偽を返す。 
+bool check_token(char *op) {
+    if (token->kind != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len)) {
+        return false;
+    }
+    return true;
+}
+
 // 次のトークンが期待したTokenKindかどうか
 bool consume_token(TokenKind kind) {
     if (token->kind != kind)
@@ -174,6 +183,12 @@ Token *tokenize(char *p) {
 
         // 文の終わり
         if (*p == ';'){
+            cur = new_token(TK_RESERVED, cur, p++, 1);
+            continue;
+        }
+
+        // ブロック
+        if (*p == '{' || *p == '}'){
             cur = new_token(TK_RESERVED, cur, p++, 1);
             continue;
         }

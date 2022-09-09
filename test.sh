@@ -49,6 +49,8 @@ assert 1 '1>=1;'
 assert 0 '1>=2;'
 
 
+計算結果は255以下となるように
+
 COMMENTOUT
 
 assert 10 'a=5;a=a+5;'
@@ -61,5 +63,8 @@ assert 4 'foo = 1; while (foo < 4) foo = foo + 1; return foo;'
 assert 4 'foo = 1; bar = 0; while (foo < 4) if (bar == 0) foo = foo + 1; else foo = foo + 2; return foo;'
 assert 5 'foo = 1; bar = 1; while (foo < 4) if (bar == 0) foo = foo + 1; else foo = foo + 2; return foo;'
 assert 10 'foo = 0; for (i = 0; i < 5; i = i + 1) foo = foo + i; return foo;'
+assert 4 'foo = 1; bar = 0; while (foo < 4) { if (bar == 0) { foo = foo + 1; } else { foo = foo + 2; } } return foo;'
+assert 4 'foo = 1; bar = 0; while (foo < 4) { if (bar == 0) { foo = foo + 1; } else { foo = foo + 1; foo = foo + 1; } } return foo;'
+assert 110 'foo = 0; bar = 0; baz = 0; for (i = 0; i < 10; i = i + 1) { foo = foo + 1; bar = bar + 1; baz = baz + foo + bar; } return baz;'
 
 echo OK
