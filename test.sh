@@ -16,55 +16,54 @@ assert() {
   fi
 }
 
-<< COMMENTOUT
+assert 0 'test/step1/test1-1.c'
+assert 42 'test/step1/test1-2.c'
 
-assert 0 '0;'
-assert 42 '42;'
-assert 21 "5+20-4;"
-assert 41 " 12 + 34 - 5 ;"
-assert 47 '5+6*7;'
-assert 15 '5*(9-6);'
-assert 4 '(3+5)/2;'
-assert 17 '4*5-(3+7)*2/4+(3+5)-2*3;'
-assert 10 '-10+20;'
-assert 60 '+45-(-3)*5;'
+assert 21 'test/step2/test2-1.c'
 
-assert 0 '0==1;'
-assert 1 '42==42;'
-assert 1 '0!=1;'
-assert 0 '42!=42;'
+assert 41 'test/step3/test3-1.c'
 
-assert 1 '0<1;'
-assert 0 '1<1;'
-assert 0 '2<1;'
-assert 1 '0<=1;'
-assert 1 '1<=1;'
-assert 0 '2<=1;'
+assert 47 'test/step5/test5-1.c'
+assert 15 'test/step5/test5-2.c'
+assert 4 'test/step5/test5-3.c'
+assert 17 'test/step5/test5-4.c'
 
-assert 1 '1>0;'
-assert 0 '1>1;'
-assert 0 '1>2;'
-assert 1 '1>=0;'
-assert 1 '1>=1;'
-assert 0 '1>=2;'
+assert 10 'test/step6/test6-1.c'
+assert 60 'test/step6/test6-2.c'
 
+assert 0 'test/step7/test7-1.c'
+assert 1 'test/step7/test7-2.c'
+assert 1 'test/step7/test7-3.c'
+assert 0 'test/step7/test7-4.c'
+assert 1 'test/step7/test7-5.c'
+assert 0 'test/step7/test7-6.c'
+assert 0 'test/step7/test7-7.c'
+assert 1 'test/step7/test7-8.c'
+assert 1 'test/step7/test7-9.c'
+assert 0 'test/step7/test7-10.c'
+assert 1 'test/step7/test7-11.c'
+assert 0 'test/step7/test7-12.c'
+assert 0 'test/step7/test7-13.c'
+assert 1 'test/step7/test7-14.c'
+assert 1 'test/step7/test7-15.c'
+assert 0 'test/step7/test7-16.c'
 
-計算結果は255以下となるように
+assert 10 'test/step9/test9-1.c'
 
-COMMENTOUT
+assert 6 'test/step10/test10-1.c'
 
-assert 10 'a=5;a=a+5;'
-assert 6 'foo = 1; bar = 2 + 3; foo = foo + bar;'
-assert 6 'foo = 1; bar = 2 + 3; return foo + bar;'
-assert 6 'foo = 1; if (foo < 2) foo = foo + 5; return foo;'
-assert 6 'foo = 6; if (foo < 2) foo = foo + 5; return foo;'
-assert 4 'foo = 6; if (foo < 2) foo = foo + 5; else foo = foo - 2; return foo;'
-assert 4 'foo = 1; while (foo < 4) foo = foo + 1; return foo;'
-assert 4 'foo = 1; bar = 0; while (foo < 4) if (bar == 0) foo = foo + 1; else foo = foo + 2; return foo;'
-assert 5 'foo = 1; bar = 1; while (foo < 4) if (bar == 0) foo = foo + 1; else foo = foo + 2; return foo;'
-assert 10 'foo = 0; for (i = 0; i < 5; i = i + 1) foo = foo + i; return foo;'
-assert 4 'foo = 1; bar = 0; while (foo < 4) { if (bar == 0) { foo = foo + 1; } else { foo = foo + 2; } } return foo;'
-assert 4 'foo = 1; bar = 0; while (foo < 4) { if (bar == 0) { foo = foo + 1; } else { foo = foo + 1; foo = foo + 1; } } return foo;'
-assert 110 'foo = 0; bar = 0; baz = 0; for (i = 0; i < 10; i = i + 1) { foo = foo + 1; bar = bar + 1; baz = baz + foo + bar; } return baz;'
+assert 6 'test/step11/test11-1.c'
+
+assert 6 'test/step12/test12-1.c'
+assert 6 'test/step12/test12-2.c'
+assert 4 'test/step12/test12-3.c'
+assert 4 'test/step12/test12-4.c'
+assert 4 'test/step12/test12-5.c'
+assert 5 'test/step12/test12-6.c'
+assert 10 'test/step12/test12-7.c'
+
+assert 4 'test/step13/test13-1.c'
+assert 4 'test/step13/test13-2.c'
+assert 110 'test/step13/test13-3.c'
 
 echo OK
