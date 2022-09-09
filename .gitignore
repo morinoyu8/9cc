@@ -4,4 +4,4 @@ tmp*
 a.out
 9cc
 .DS_Store
-test
+test/
