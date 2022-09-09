@@ -53,5 +53,6 @@ COMMENTOUT
 
 assert 10 'a=5;a=a+5;'
 assert 6 'foo = 1; bar = 2 + 3; foo = foo + bar;'
+assert 6 'foo = 1; bar = 2 + 3; return foo + bar;'
 
 echo OK

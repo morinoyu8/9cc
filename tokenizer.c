@@ -45,6 +45,14 @@ bool consume(char *op) {
     return true;
 }
 
+// 次のトークンが期待したTokenKindかどうか
+bool consume_token(TokenKind kind) {
+    if (token->kind != kind)
+        return false;
+    token = token->next;
+    return true;
+}
+
 // 次のトークンがローカル変数のときは、トークンを1つ読み進めてそのトークンを返す
 Token *consume_ident() {
     if (token->kind != TK_IDENT)
@@ -78,8 +86,8 @@ bool at_eof() {
     return token->kind == TK_EOF;
 }
 
-bool isidentchar(char p) {
-    return ('a' <= p && p <= 'z') || ('A' <= p && p <= 'Z') || p == '_';
+bool is_alnum(char p) {
+    return ('a' <= p && p <= 'z') || ('A' <= p && p <= 'Z') || ('0' <= p && p <= '9') || p == '_';
 }
 
 // 新しいトークンを作成してcurに繋げる
@@ -105,6 +113,14 @@ Token *tokenize(char *p) {
             continue;
         }
 
+        // return文
+        if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])) {
+            cur = new_token(TK_RETURN, cur, p, 6);
+            p += 6;
+            continue;
+        }
+
+        // 比較
         if (*p == '<' || *p == '>' || *p == '=' || *p == '!') {
             if (*(p + 1) == '=') {
                 cur = new_token(TK_RESERVED, cur, p, 2);
@@ -115,26 +131,30 @@ Token *tokenize(char *p) {
             continue;
         }
 
+        // 二項演算
         if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')') {
             cur = new_token(TK_RESERVED, cur, p++, 1);
             continue;
         }
 
+        // 整数
         if (isdigit(*p)) {
             cur = new_token(TK_NUM, cur, p, 0);
             cur->val = strtol(p, &p, 10);
             continue;
         }
 
+        // 文の終わり
         if (*p == ';'){
             cur = new_token(TK_RESERVED, cur, p++, 1);
             continue;
         }
 
-        if (isidentchar(*p)) {
+        // 変数
+        if (is_alnum(*p)) {
             int len = 0;
             char *memo_p = p;
-            while(isidentchar(*p)) {
+            while(is_alnum(*p)) {
                 len++;
                 p++;
             }
