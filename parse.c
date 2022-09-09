@@ -56,6 +56,7 @@ void program() {
 }
 
 // stmt = expr ";"
+//      | "return" expr ";"
 Node *stmt() {
     Node *node;
 
