@@ -54,6 +54,16 @@ bool check_token(char *op) {
     return true;
 }
 
+// tokenの次のトークンが期待している記号のとき、
+// 真を返す。それ以外の場合には偽を返す。 
+bool check_next_token(char *op) {
+    Token *next = token->next; 
+    if (next->kind != TK_RESERVED || strlen(op) != next->len || memcmp(next->str, op, next->len)) {
+        return false;
+    }
+    return true;
+}
+
 // 次のトークンが期待したTokenKindかどうか
 bool consume_token(TokenKind kind) {
     if (token->kind != kind)

@@ -14,12 +14,12 @@ LVar *locals;
 Node *stmt();
 Node *expr();
 Node *assign();
-Node *equality();
-Node *relational();
-Node *add();
-Node *mul();
-Node *unary();
-Node *primary();
+Node *equality(int isleft);
+Node *relational(int isleft);
+Node *add(int isleft);
+Node *mul(int isleft);
+Node *unary(int isleft);
+Node *primary(int isleft);
 
 // 変数を名前で検索する
 // 見つからなかった場合はNULLを返す
@@ -147,7 +147,10 @@ Node *expr() {
 
 // assign = equality ("=" assign)?
 Node *assign() {
-    Node *node = equality();
+    int isleft = 0;
+    if (check_next_token("="))
+        isleft = 1;
+    Node *node = equality(isleft);
 
     if (consume("="))
         node = new_node(ND_ASSIGN, 2, node, assign());
@@ -155,76 +158,76 @@ Node *assign() {
 }
 
 // equality = relational ("==" relational | "!=" relational)*
-Node *equality() {
-    Node *node = relational();
+Node *equality(int isleft) {
+    Node *node = relational(isleft);
 
     for (;;) {
         if (consume("=="))
-            node = new_node(ND_EQ, 2, node, relational());
+            node = new_node(ND_EQ, 2, node, relational(isleft));
         else if (consume("!="))
-            node = new_node(ND_NE, 2, node, relational());
+            node = new_node(ND_NE, 2, node, relational(isleft));
         else
             return node;
     }
 }
 
 // relational = add ("<" add | "<= add" | ">" add | ">=" add)*
-Node *relational() {
-    Node *node = add();
+Node *relational(int isleft) {
+    Node *node = add(isleft);
 
     for (;;) {
         if (consume("<"))
-            node = new_node(ND_LT, 2, node, add());
+            node = new_node(ND_LT, 2, node, add(isleft));
         else if (consume("<="))
-            node = new_node(ND_LE, 2, node, add());
+            node = new_node(ND_LE, 2, node, add(isleft));
         else if (consume(">"))
-            node = new_node(ND_LT, 2, add(), node);
+            node = new_node(ND_LT, 2, add(isleft), node);
         else if (consume(">="))
-            node = new_node(ND_LE, 2, add(), node);
+            node = new_node(ND_LE, 2, add(isleft), node);
         else
             return node;
     }
 }
 
 // add = mul ("+" mul | "-" mul)*
-Node *add() {
-    Node *node = mul();
+Node *add(int isleft) {
+    Node *node = mul(isleft);
 
     for (;;) {
         if (consume("+"))
-            node = new_node(ND_ADD, 2, node, mul());
+            node = new_node(ND_ADD, 2, node, mul(isleft));
         else if (consume("-"))
-            node = new_node(ND_SUB, 2, node, mul());
+            node = new_node(ND_SUB, 2, node, mul(isleft));
         else
             return node;
     }
 }
 
 // mul = unary ("*" unary | "/" unary)*
-Node *mul() {
-    Node *node = unary();
+Node *mul(int isleft) {
+    Node *node = unary(isleft);
 
     for (;;) {
         if (consume("*"))
-            node = new_node(ND_MUL, 2, node, unary());
+            node = new_node(ND_MUL, 2, node, unary(isleft));
         else if (consume("/"))
-            node = new_node(ND_DIV, 2, node, unary());
+            node = new_node(ND_DIV, 2, node, unary(isleft));
         else
             return node;
     }
 }
 
 // unary = ("+" | "-")? primary
-Node *unary() {
+Node *unary(int isleft) {
     if (consume("+"))
-        return primary();
+        return primary(isleft);
     else if (consume("-"))
-        return new_node(ND_SUB, 2, new_node_num(0), primary());
-    return primary();
+        return new_node(ND_SUB, 2, new_node_num(0), primary(isleft));
+    return primary(isleft);
 }
 
 // primary = num | ident ( "(" ")" )? | "(" expr ")"
-Node *primary() {
+Node *primary(int isleft) {
     // 次のトークンが"("なら、"(" expr ")"のはず
     if (consume("(")) {
         Node *node = expr();
@@ -252,6 +255,8 @@ Node *primary() {
         if (lvar) {
             node->offset = lvar->offset;
         } else {
+            if (!isleft)
+                error_at(token->str, "変数が定義されていません");
             lvar = calloc(1, sizeof(LVar));
             lvar->next = locals;
             lvar->name = tok->str;

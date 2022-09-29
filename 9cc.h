@@ -93,6 +93,7 @@ void error_at(char *loc, char *fmt, ...);
 void error(char *fmt, ...);
 bool consume(char *op);
 bool check_token(char *op);
+bool check_next_token(char *op);
 bool consume_token(TokenKind kind);
 Token *consume_ident();
 void expect(char *op);
