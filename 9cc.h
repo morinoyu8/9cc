@@ -36,6 +36,7 @@ typedef enum {
     ND_LE,      // <=
     ND_ASSIGN,  // =
     ND_LVAR,    // ローカル変数
+    ND_FUNC,    // 関数
     ND_NUM,     // 整数
     ND_BLOCK,   // ブロック
     ND_RETURN,  // return
@@ -67,6 +68,18 @@ struct LVar {
 
 // ローカル変数
 extern LVar *locals;
+
+/*typedef struct Func Func;
+
+// 関数の型
+struct Func {
+    Func *next; // 次の関数かNULL
+    char *name; // 関数の名前
+    int len;    // 名前の長さ
+    int arglen; // 引数の数
+};
+
+extern Func *funcs;*/
 
 // 現在着目しているトークン
 extern Token *token;

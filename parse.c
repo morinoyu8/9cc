@@ -31,6 +31,16 @@ LVar *find_lvar(Token *tok) {
     return NULL;
 }
 
+// 関数を名前で検索する
+// 見つからなかった場合はNULLを返す
+/*Func *find_func(Token *tok) {
+    for (Func *func = funcs; func; func = func->next) {
+        if (func->len == tok->len && !memcmp(tok->str, func->name, func->len))
+            return func;
+    }
+    return NULL;
+}*/
+
 // 新しいノードの作成
 Node *new_node(NodeKind kind, int child_num, ...) {
     Node *node = calloc(1, sizeof(Node));
@@ -213,7 +223,7 @@ Node *unary() {
     return primary();
 }
 
-// primary = num | ident | "(" expr ")"
+// primary = num | ident ( "(" ")" )? | "(" expr ")"
 Node *primary() {
     // 次のトークンが"("なら、"(" expr ")"のはず
     if (consume("(")) {
@@ -226,8 +236,18 @@ Node *primary() {
     Token *tok = consume_ident();
     if (tok) {
         Node *node = calloc(1, sizeof(Node));
+
+        // 関数呼び出し
+       /* if (consume("(")) {
+            node->kind = ND_FUNC;
+            Func *func = find_func(tok);
+            if (!func)
+                error_at(token->str, "関数が定義されていません");
+            expect(")");
+            return node;
+        }*/
+
         node->kind = ND_LVAR;
-        
         LVar *lvar = find_lvar(tok);
         if (lvar) {
             node->offset = lvar->offset;
@@ -236,7 +256,6 @@ Node *primary() {
             lvar->next = locals;
             lvar->name = tok->str;
             lvar->len = tok->len;
-            //printf("OK!!!!\n");
             if (locals)
                 lvar->offset = locals->offset + 8;
             else

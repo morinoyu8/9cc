@@ -13,6 +13,9 @@ test: 9cc
 	chmod a+x test.sh
 	./test.sh
 
+.c:
+	./9cc .c
+
 clean:
 	rm -f 9cc *.o *~ tmp*
 

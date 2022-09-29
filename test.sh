@@ -49,6 +49,7 @@ assert 1 'test/step7/test7-15.c'
 assert 0 'test/step7/test7-16.c'
 
 assert 10 'test/step9/test9-1.c'
+assert 20 'test/step9/test9-2.c'
 
 assert 6 'test/step10/test10-1.c'
 
